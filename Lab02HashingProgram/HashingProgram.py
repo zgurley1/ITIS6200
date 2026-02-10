@@ -1,8 +1,8 @@
-import os
 import hashlib
 import json
+import os
 
-
+# For this assignment I used the following documentation for hash functions https://www.geeksforgeeks.org/python/hashlib-module-in-python/
 
 def hash_file(fileName):
     sha256 = hashlib.sha256()
