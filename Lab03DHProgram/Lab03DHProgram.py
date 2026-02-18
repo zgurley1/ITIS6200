@@ -2,7 +2,15 @@ import hashlib
 import secrets
 import os
 
-
+'''
+I read all of the posted resources before attemping this assignment
+https://docs.python.org/3/library/hashlib.html
+https://docs.python.org/3/library/secrets.html
+https://docs.python.org/3/library/functions.html#pow
+https://docs.python.org/3/library/functions.html#hex
+https://docs.python.org/3/library/stdtypes.html#str.replace
+https://www.geeksforgeeks.org/computer-networks/implementation-diffie-hellman-algorithm/
+'''
 
 # --- UI HELPER FUNCTIONS ---
 def print_header(text):
@@ -41,6 +49,9 @@ class SecurePRNG:
 
     def __init__(self, seed_int):
         # TODO: Initalize the SecurePRNG with the shared secret (seed_int) calculated from Diffie-Hellman key exchange.
+
+
+        # something like A^b mod p where p is predefined
         
     def generate(self, n_bytes):
         # TODO: Generates n bytes while ensuring Rollback Resistance. 
@@ -170,7 +181,7 @@ def main():
     print("   [Status]: Shared Secret computed: S = B^a mod P = A^b mod P")
     
     print_step("Step 3: Secure Message Transmission")
-    message = b"<INPUT YOUR MESSAGE HERE>" # Put in your test message here
+    message = b"<We are meeting at 10am tomorrow>" # Put in your test message here
     encrypted_msg = xor_crypt(message, alice.session_prng)
     delivered_data = net.send("Alice", "Bob", encrypted_msg)
     final_message = xor_crypt(delivered_data, bob.session_prng)
