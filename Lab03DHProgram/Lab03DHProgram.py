@@ -1,5 +1,6 @@
 import hashlib
 import secrets
+import random
 import os
 
 '''
@@ -49,12 +50,10 @@ class SecurePRNG:
 
     def __init__(self, seed_int):
         # TODO: Initalize the SecurePRNG with the shared secret (seed_int) calculated from Diffie-Hellman key exchange.
-
-
-        # something like A^b mod p where p is predefined
+        prng = SecurePRNG(seed_int=seed_int)
         
     def generate(self, n_bytes):
-        # TODO: Generates n bytes while ensuring Rollback Resistance. 
+        # TODO: Generates n bytes while ensuring Rollback Resistance.
         output = b""
         while len(output) < n_bytes:
             # 1. Produce keystream block from current state
@@ -67,18 +66,18 @@ class SecurePRNG:
 
 def xor_crypt(data, prng):
     # TODO: Implement Simple XOR stream cipher logic.
-
+    code = "REPLACE"
 
 
 # --- PART B: COMMUNICATION PROTOCOL ---
 
 class Entity:
     # TODO: Calculate public and private keys with global P and G.
-
     def __init__(self, name):
         self.name = name
-        self.private_key =  
-        self.public_key =  
+        # Generate a private key (a,b) between 2 and 20 for computational purposes
+        self.private_key = random.randint(2, 20)
+        self.public_key = pow(G, self.private_key, P)
         self.session_prng = None
 
     def get_public_hex(self):
@@ -86,8 +85,8 @@ class Entity:
     
     # TODO: calculate and initialize shared secret with SecurePRNG
     def establish_session(self, partner_pub_hex):
-        partner_pub = 
-        shared_secret = 
+        partner_pub = int(partner_pub_hex)
+        shared_secret = pow(partner_pub_hex, self.private_key, P)
         self.session_prng = SecurePRNG(shared_secret)
 
 
