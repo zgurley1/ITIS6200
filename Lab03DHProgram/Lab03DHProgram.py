@@ -50,23 +50,25 @@ class SecurePRNG:
 
     def __init__(self, seed_int):
         # TODO: Initalize the SecurePRNG with the shared secret (seed_int) calculated from Diffie-Hellman key exchange.
-        prng = SecurePRNG(seed_int=seed_int)
+        self.prng = hashlib.sha256(str(seed_int).encode()).digest()
         
     def generate(self, n_bytes):
         # TODO: Generates n bytes while ensuring Rollback Resistance.
         output = b""
         while len(output) < n_bytes:
             # 1. Produce keystream block from current state
-
+            block = hashlib.sha256(self.prng).digest()
+            output += block
             # 2. Update state immediately after with a hash function (One-way progression)
-            
+            self.prng = hashlib.sha256(self.prng).digest()
         return output[:n_bytes]
 
 
 
 def xor_crypt(data, prng):
     # TODO: Implement Simple XOR stream cipher logic.
-    code = "REPLACE"
+    keystream = prng.generate(len(data))
+    return bytes([d ^ k for d, k in zip(data, keystream)])
 
 
 # --- PART B: COMMUNICATION PROTOCOL ---
@@ -85,8 +87,8 @@ class Entity:
     
     # TODO: calculate and initialize shared secret with SecurePRNG
     def establish_session(self, partner_pub_hex):
-        partner_pub = int(partner_pub_hex)
-        shared_secret = pow(partner_pub_hex, self.private_key, P)
+        partner_pub = int(partner_pub_hex, 16)
+        shared_secret = pow(partner_pub, self.private_key, P)
         self.session_prng = SecurePRNG(shared_secret)
 
 
@@ -110,8 +112,8 @@ class Network:
 # Implement logic for Mallory
 class Mallory:
     def __init__(self):
-        self.private_key =
-        self.public_hex =
+        self.private_key = random.randint(2, 20)
+        self.public_hex = hex(pow(G, self.private_key, P))
         
         # Mallory maintains TWO sessions
         self.alice_prng = None
@@ -123,8 +125,13 @@ class Mallory:
             remote_pub = int(payload, 16)
             my_shared_secret = pow(remote_pub, self.private_key, P)
 
-            # TODO: If the sender is alice, generate a session PRNG with Alice. 
+            # TODO: If the sender is alice, generate a session PRNG with Alice.
             # If the sender is Bob, generate a session PRNG with Bob.
+
+            if sender == "Alice":
+                self.alice_prng = SecurePRNG(my_shared_secret)
+            elif sender == "Bob":
+                self.bob_prng = SecurePRNG(my_shared_secret)
     
             return self.public_hex # Return Mallory's key instead to generate session PRNGs with Alice and Bob
         
@@ -134,10 +141,15 @@ class Mallory:
 
             # TODO: Decrypt the message using the appropriate session PRNG (Hint: Alice is the sender)
             # Print the plaintext message to the console for Mallory's spying purposes.
+            plaintext = xor_crypt(payload, self.alice_prng)
+
+
+            print(f"[Mallory] Decrypted:", plaintext.decode())
 
             # Modify the plaintext message in some way
-
+            modified = plaintext.replace(b"9pm", b"3am")
             # Then use the PRNG shared with bob to re-encrypt and return the message for Bob
+            payload = xor_crypt(modified, self.bob_prng)
 
         return payload
 
