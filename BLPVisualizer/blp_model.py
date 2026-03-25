@@ -28,21 +28,70 @@ class BLPSystem:
         self.subjects = {}
         self.objects = {}
 
-    def add_subject():
-        return
+    def add_subject(self, name, max_level, start_level):
+        if level_rank(start_level) > level_rank(max_level):
+            print(f" Cannot add subject '{name}': start {start_level} > max {max_level}.")
+            return
+        self.subjects[name] = Subject(name, max_level, start_level)
+
+        
     
-    def add_object():
-        return
+    def add_object(self, name, level):
+        self.objects[name] = Object(name, level)
+        
     
-    def validate_levels():
-        return
+    def validate_levels(self, subject_name, object_name):
+        subject = self.subjects[subject_name]
+        object = self.objects[object_name]
+        return level_rank(subject.curr_level) == level_rank(object.level)
     
-    def set_level():
-        return
+    def set_level(self, subject_name, new_level):
+        subject = self.subjects[subject_name]
+
+        # Check that subject is not decreasing level
+        if level_rank(new_level) < level_rank(subject.curr_level):
+            print(f"Level not set, {subject_name} connot lower level from {subject.curr_level} to {new_level}")
+            return False
+        # Check that subject is not going above max level
+        if level_rank(new_level) > level_rank(subject.max_level):
+            print(f"Level not set, {subject_name} cannot raise level to {new_level}. Max clearance is {subject.max_level}.")
+            return False
+        
+
+        print(f"LEVEL SET: {subject_name} is not {new_level}")
+        subject.curr_level = new_level
+        return True
     
-    def read():
-        return
+    def read(self, subject_name, object_name):
+        subject = self.subjects[subject_name]
+        object = self.objects[object_name]
+
+        subject_level = level_rank(subject.curr_level)
+        object_level = level_rank(object.level)
+
+        if subject_level > object_level:
+            print(f"Read Granted: {subject_name} ({subject.curr_level}) reads {object_name} ({object.level})")
+            return True
+        
+        if object_level <= (subject.max_level):
+            print(f"Read Granted: {subject_name} auto-raised to {object.level} to read {object_name}.")
+            subject.curr_level = object.level
+            return True
+        
+        print(f"Read Denied: {subject_name} ({subject.curr_level}), max={subject.max_level}, cannot read {object_name} ({object.level})")
+        return False
+        
     
-    def write():
-        return
+    def write(self, subject_name, object_name):
+        subject = self.subjects[subject_name]
+        object = self.objects[object_name]
+
+        subject_level = level_rank(subject.curr_level)
+        object_level = level_rank(object.level)
+
+        if subject_level <= object_level:
+            print(f"Write Granted: {subject_name} ({subject.curr_level}) writes to {object_name} ({object.curr_level})")
+            return True
+        print(f"Write Denied: {subject_name} ({subject.curr_level}) does not have persmission to write to {object_name} ({object.level})")
+        return False
         
