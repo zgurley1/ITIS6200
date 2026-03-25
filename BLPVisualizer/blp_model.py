@@ -73,7 +73,7 @@ class BLPSystem:
             print(f"Read Granted: {subject_name} ({subject.curr_level}) reads {object_name} ({object.level})")
             return True
         
-        if object_level <= (subject.max_level):
+        if object_level <= level_rank(subject.max_level):
             print(f"Read Granted: {subject_name} auto-raised to {object.level} to read {object_name}.")
             subject.curr_level = object.level
             return True
