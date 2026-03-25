@@ -17,9 +17,14 @@ def build_sytem():
 
 def run_case(number, description, actions):
     blp = build_sytem()
+    blp.reset()
+    print()
     print("=" * 60)
-    print(f"Case {number}: {description}")
+    print(f"Case {number}")
     print("=" * 60)
+
+    print(f"Action:  {description}")
+    blp.print_state()
     actions(blp)
     
 def case1(blp):
@@ -125,6 +130,11 @@ if __name__ == "__main__":
         (17, "Alice reads username.txt, sets level to C, writes emails.txt; Eve reads emails.txt", case17),
         (18, "Eve reads pub.txt then reads emails.txt", case18),
     ]
+
+    print(f"=" * 60)
+    print(" Bell-LaPadula (BLP) Simulator CLI")
+    print(f"=" * 60)
+
 
     for number, description, fn in cases:
         run_case(number, description, fn)

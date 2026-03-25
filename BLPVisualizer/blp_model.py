@@ -90,8 +90,31 @@ class BLPSystem:
         object_level = level_rank(object.level)
 
         if subject_level <= object_level:
-            print(f"Write Granted: {subject_name} ({subject.curr_level}) writes to {object_name} ({object.curr_level})")
+            print(f"Write Granted: {subject_name} ({subject.curr_level}) writes to {object_name} ({object.level})")
             return True
         print(f"Write Denied: {subject_name} ({subject.curr_level}) does not have persmission to write to {object_name} ({object.level})")
         return False
+    
+
+
+
+    def print_state(self):
+        print("\n  === Current Access Levels ===")
+        for name, s in self.subjects.items():
+            print(f"    [Subject] {name:6s}: current={s.curr_level}, max={s.max_level}")
+        
+        for name, o in self.objects.items():
+            print(f"    [Object] {name:6s}: current={o.level}") 
+        print("=" * 32)
+        print()
+
+    def reset(self):
+        defaults = {
+            "Alice": ("S", "U"),
+            "Bob":   ("C", "C"),
+            "Eve":   ("U", "U"),
+        }
+        for name, (max_lvl, start_lvl) in defaults.items():
+            self.subjects[name].max_level  = max_lvl
+            self.subjects[name].curr_level = start_lvl
         
